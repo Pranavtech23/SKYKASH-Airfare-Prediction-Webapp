@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Booking{% endblock %}
+{% block content %}
+<div class="text-center">
+    <i class="fas fa-calendar-check fa-5x text-success mb-4"></i>
+    <h1 class="display-5 fw-bold mb-4">Booking Coming Soon!</h1>
+    <p class="lead mb-5">This service will be shortly available. For now, use prediction for planning.</p>
+    <a href="{{ url_for('predict') }}" class="btn btn-outline-primary btn-lg">Back to Predict</a>
+</div>
+{% endblock %}

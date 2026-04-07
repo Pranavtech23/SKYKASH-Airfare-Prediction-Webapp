@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+{% block title %}Predict Price{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow-lg border-0 mb-5">
+            <div class="card-header bg-primary text-white py-4">
+                <h2 class="mb-0 fw-bold"><i class="fas fa-magic me-2"></i>Predict Flight Price</h2>
+                <p class="mb-0 opacity-75">Enter details to get instant prediction</p>
+            </div>
+            <div class="card-body p-5">
+                <form method="POST" id="predictForm">
+                    <div class="row g-4">
+                        <!-- Form fields matching model.py exactly -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Airline <span class="text-danger">*</span></label>
+                            <select class="form-select form-select-lg" name="airline" required>
+                                <option value="">Choose Airline</option>
+                                <option value="Jet Airways">Jet Airways</option>
+                                <option value="IndiGo">IndiGo</option>
+                                <option value="Air India">Air India</option>
+                                <option value="Multiple carriers">Multiple carriers</option>
+                                <option value="SpiceJet">SpiceJet</option>
+                                <option value="Multiple carriers Premium economy">Multiple carriers Premium economy</option>
+                                <option value="Air Asia">Air Asia</option>
+                                <option value="Vistara">Vistara</option>
+                                <option value="GoAir">GoAir</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Source <span class="text-danger">*</span></label>
+                            <select class="form-select form-select-lg" name="source" required>
+                                <option value="">Select Source</option>
+                                <option value="Bangalore">Bangalore</option>
+                                <option value="Chennai">Chennai</option>
+                                <option value="Delhi">Delhi</option>
+                                <option value="Kolkata">Kolkata</option>
+                                <option value="Mumbai">Mumbai</option>
+                                <!-- <option value="Hyderabad">Hyderabad</option> -->
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Destination <span class="text-danger">*</span></label>
+                            <select class="form-select form-select-lg" name="destination" required>
+                                <option value="">Select Destination</option>
+                                <option value="Cochin">Cochin</option>
+                                <option value="Delhi">Delhi</option>
+                                <option value="Hyderabad">Hyderabad</option>
+                                <option value="Kolkata">Kolkata</option>
+                                <!-- <option value="New Delhi">New Delhi</option> -->
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Stops <span class="text-danger">*</span></label>
+                            <select class="form-select form-select-lg" name="stops" required>
+                                <option value="">Select Stops</option>
+                                <option value="0">non-stop</option>
+                                <option value="1">1 stop</option>
+                                <!-- <option value="2">2 stops</option>
+                                <option value="3">3 stops</option>
+                                <option value="4">4 stops</option> -->
+                            </select>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Departure Date <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control form-control-lg" name="dep_date" required>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Departure Time <span class="text-danger">*</span></label>
+                            <input type="time" class="form-control form-control-lg" name="dep_time" required>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Arrival Date <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control form-control-lg" name="arr_date" required>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Arrival Time <span class="text-danger">*</span></label>
+                            <input type="time" class="form-control form-control-lg" name="arr_time" required>
+                        </div>
+
+                        <!-- FORM VALIDATION ALERT -->
+                        <div id="formErrors" class="alert alert-danger d-none mb-4" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Please fill:</strong> <span id="errorList"></span>
+                        </div>
+                        
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary btn-lg w-100 py-3 fw-bold shadow-lg" id="predictBtn">
+                                <span class="spinner-border spinner-border-sm d-none me-2" id="spinner"></span>
+                                <i class="fas fa-brain me-2"></i>Predict Price Now
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Results Section - SCROLL TARGET & STICKY (NEVER DISAPPEARS!) -->
+        {% if prediction %}
+            {% if prediction.error %}
+                <div id="prediction-result" class="alert alert-danger shadow-lg sticky-result" role="alert">
+                    <h4 class="alert-heading"><i class="fas fa-exclamation-triangle me-2"></i>Error</h4>
+                    <p>{{ prediction.error }}</p>
+                </div>
+            {% elif prediction.success %}
+
+<div id="prediction-result" class="alert alert-success shadow-lg sticky-result p-4">
+
+    <h3 class="text-center mb-3">
+        ✅ Predicted Price: <strong>₹{{ "%.2f"|format(prediction.price) }}</strong>
+    </h3>
+
+    <p class="text-center text-success-emphasis mb-4">
+        ML model prediction based on your flight details
+    </p>
+
+    <hr>
+
+    <h5 class="fw-bold text-center mb-3">✈ Flight Summary</h5>
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-10">
+
+            <ul class="list-group list-group-flush mb-4">
+
+                <li class="list-group-item d-flex justify-content-between">
+                    <strong>Airline</strong>
+                    <span>{{ prediction.airline }}</span>
+                </li>
+
+                <li class="list-group-item d-flex justify-content-between">
+                    <strong>Route</strong>
+                    <span>{{ prediction.source }} → {{ prediction.destination }}</span>
+                </li>
+
+                <li class="list-group-item d-flex justify-content-between">
+                    <strong>Stops</strong>
+                    <span>
+                        {% if prediction.stops == "0" %} Non-stop {% else %} {{ prediction.stops }} stop {% endif %}
+                    </span>
+                </li>
+
+                <li class="list-group-item d-flex justify-content-between">
+                    <strong>Departure</strong>
+                    <span>{{ prediction.dep_date }} @ {{ prediction.dep_time }}</span>
+                </li>
+
+                <li class="list-group-item d-flex justify-content-between">
+                    <strong>Arrival</strong>
+                    <span>{{ prediction.arr_date }} @ {{ prediction.arr_time }}</span>
+                </li>
+
+            </ul>
+            <form method="POST" action="/download_pdf">
+
+                <input type="hidden" name="price" value="{{ prediction.price }}">
+                <input type="hidden" name="airline" value="{{ prediction.airline }}">
+                <input type="hidden" name="source" value="{{ prediction.source }}">
+                <input type="hidden" name="destination" value="{{ prediction.destination }}">
+                <input type="hidden" name="stops" value="{{ prediction.stops }}">
+                <input type="hidden" name="dep_date" value="{{ prediction.dep_date }}">
+                <input type="hidden" name="dep_time" value="{{ prediction.dep_time }}">
+                <input type="hidden" name="arr_date" value="{{ prediction.arr_date }}">
+                <input type="hidden" name="arr_time" value="{{ prediction.arr_time }}">
+
+                <button class="btn btn-dark btn-lg w-100 mt-3">
+                    📄 Download PDF 
+                </button>
+
+            </form>
+
+
+
+            <a href="{{ url_for('booking') }}" class="btn btn-success btn-lg w-100 shadow">
+                <i class="fas fa-bookmark me-2"></i>Proceed to Booking
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+        {% endif %}
+    </div>
+    
+    <!-- Sidebar - Always visible on right side -->
+    <div class="col-lg-4">
+        <div class="card shadow border-0 h-100">
+            <div class="card-body text-center p-4">
+                <i class="fas fa-trophy fa-4x text-warning mb-3"></i>
+                <h5 class="fw-bold mb-2">Prediction Details</h5>
+                <ul class="list-unstyled text-start">
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Uses datetime parsing</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Duration auto-calculation</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Encoded categorical features</li>
+                    <li><i class="fas fa-check text-success me-2"></i>Trained pipeline model</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SCROLL TO PREDICTION RESULT AFTER PREDICT (OVERRIDES TOP SCROLL) -->
+<script>
+setTimeout(function() {
+    const result = document.getElementById('prediction-result');
+    if (result) {
+        result.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+}, 300);
+</script>
+{% endblock %}

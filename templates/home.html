@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Home - Skykash{% endblock %}
+{% block content %}
+<div class="row align-items-center min-vh-70">
+    <div class="col-lg-6">
+        <h1 class="display-4 fw-bold mb-4 text-primary">Predict Flight Prices Instantly</h1>
+        <p class="lead mb-4">Enter your flight details and get accurate price predictions powered by advanced ML models. Save time & money on bookings.</p>
+        <div class="row g-3 mb-4">
+            <div class="col-md-6"><div class="feature-card"><i class="fas fa-brain fa-2x text-primary mb-2"></i><h5>AI-Powered</h5></div></div>
+            <div class="col-md-6"><div class="feature-card"><i class="fas fa-bolt fa-2x text-primary mb-2"></i><h5>Lightning Fast</h5></div></div>
+        </div>
+        {% if 'user' not in session %}
+            <a href="{{ url_for('predict') }}" class="btn btn-primary btn-lg px-4 me-3">Get Started Free</a>
+            <a href="{{ url_for('login') }}" class="btn btn-outline-primary btn-lg px-4">Login</a>
+        {% else %}
+            <a href="{{ url_for('predict') }}" class="btn btn-primary btn-lg px-4">Predict Now</a>
+        {% endif %}
+    </div>
+    <div class="col-lg-6 text-center">
+        <i class="fas fa-plane-departure fa-10x text-primary opacity-75"></i>
+    </div>
+</div>
+{% endblock %}
